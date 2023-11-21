@@ -6,4 +6,5 @@
     <color name="blue">#0000FF</color>
     <color name="press_green">#AF00FF00</color>
     <color name="press_blue">#AF0000FF</color>
+    <color name="red">#ff0000</color>
 </resources>

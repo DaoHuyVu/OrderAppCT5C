@@ -1,0 +1,101 @@
+package com.example.orderappct5c.ui.signup
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import com.example.orderappct5c.ErrorMessage
+import com.example.orderappct5c.R
+import com.example.orderappct5c.databinding.FragmentSignupBinding
+import com.example.orderappct5c.util.showToast
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
+class SignUpFragment : Fragment() {
+    private var _binding : FragmentSignupBinding? = null
+    private val binding : FragmentSignupBinding get() = _binding!!
+    private val signUpViewModel : SignUpViewModel by viewModels()
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentSignupBinding.inflate(layoutInflater)
+        return binding.root
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.apply{
+            usernameInputSignup.apply {
+                setText(signUpViewModel.username)
+                doOnTextChanged{ userName,_,_,_ ->
+                    signUpViewModel.userNameChange(userName.toString())
+                }
+            }
+            passwordInputSignup.apply{
+                setText(signUpViewModel.password)
+                doOnTextChanged{ password,_,_,_ ->
+                    signUpViewModel.userNameChange(password.toString())
+                }
+            }
+            emailInputSignup.apply{
+                setText(signUpViewModel.email)
+                doOnTextChanged{ email,_,_,_ ->
+                    signUpViewModel.userNameChange(email.toString())
+                }
+            }
+            signupButton.apply {
+                setOnClickListener{
+                    signUpViewModel.signUp()
+                }
+            }
+        }
+        signUpViewModel.signUpUiState.observe(viewLifecycleOwner){
+            it?.let{
+                if(it.isLoading){
+                    binding.apply{
+                        signupButton.isEnabled = false
+                        signupProgressbar.visibility = View.VISIBLE
+                    }
+                }
+                else{
+                    binding.apply{
+                        signupButton.isEnabled = true
+                        signupProgressbar.visibility = View.GONE
+                    }
+                    if(it.isUserSignUpSuccessfully){
+                        //navigate to home screen
+                        showToast("Login successfully")
+                    }
+                    else{
+                        it.errorMessage?.let{errorMessage ->
+                            when(errorMessage){
+                                ErrorMessage.NO_INTERNET_CONNECTION -> showToast(getString(R.string.no_internet_connection))
+                                ErrorMessage.SIGN_UP_FAIL -> showToast(getString(R.string.sign_up_fail))
+                                else -> {}
+                            }
+                            signUpViewModel.errorMessageShown()
+                        }
+                    }
+                }
+            }
+        }
+        signUpViewModel.signUpUiFormState.observe(viewLifecycleOwner){
+            it?.let{
+                binding.apply {
+                    usernameInputSignupLayout.isHelperTextEnabled = it.userNameInvalid
+                    passwordInputSignupLayout.isHelperTextEnabled = it.passwordInvalid
+                    emailInputSignupLayout.isHelperTextEnabled = it.emailInvalid
+                }
+                if(!it.passwordInvalid && !it.emailInvalid && !it.userNameInvalid)
+                    binding.signupButton.isEnabled = true
+            }
+        }
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+}
