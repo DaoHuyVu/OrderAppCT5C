@@ -1,9 +1,19 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.OrderAppCT5C" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <style name="Base.Theme.OrderAppCT5C" parent="Theme.Material3.Dark.NoActionBar">
+
     </style>
 
-    <style name="Theme.OrderAppCT5C" parent="Base.Theme.OrderAppCT5C" />
+    <style name="StartingTheme.OrderAppCT5C" parent="Base.Theme.OrderAppCT5C">
+        <item name="android:windowFullscreen">true</item>
+    </style>
+    <style name="CustomActionBar" parent="Widget.MaterialComponents.ActionBar.Solid">
+        <item name="colorPrimary">@color/black</item>
+    </style>
+    <style name="BottomNavView" parent="Widget.MaterialComponents.BottomNavigationView.Colored">
+        <item name="itemIconTint">@color/white</item>
+        <item name="itemTextColor">@color/white</item>
+        <item name="android:background">@color/black</item>
+    </style>
+
 </resources>

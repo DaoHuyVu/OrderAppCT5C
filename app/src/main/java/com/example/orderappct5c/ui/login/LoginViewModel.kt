@@ -1,21 +1,22 @@
 package com.example.orderappct5c.ui.login
 
-import android.util.Log
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.orderappct5c.ErrorMessage
-import com.example.orderappct5c.data.login.LoginRepo
+import com.example.orderappct5c.Message
+import com.example.orderappct5c.data.auth.AuthRepo
+import com.example.orderappct5c.util.DataStoreUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
+import java.net.ConnectException
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginRepo: LoginRepo
+    private val loginRepo: AuthRepo,
+    private val dataStoreUtil: DataStoreUtil
 ) : ViewModel() {
     private var _userName = ""
     val userName get() = _userName
@@ -33,19 +34,19 @@ class LoginViewModel @Inject constructor(
     }
     fun errorMessageShown(){
         _loginUiState.value = LoginUiState(
-            errorMessage = null
+            message = null
         )
     }
     fun login(){
         if(userName.isEmpty()){
             _loginUiState.value = LoginUiState(
-                errorMessage = ErrorMessage.USERNAME_EMPTY
+                message = Message.USERNAME_EMPTY
             )
         }
         else{
             if(password.isEmpty()){
                 _loginUiState.value = LoginUiState(
-                    errorMessage = ErrorMessage.PASSWORD_EMPTY
+                    message = Message.PASSWORD_EMPTY
                 )
             }
             else{
@@ -53,15 +54,32 @@ class LoginViewModel @Inject constructor(
                     _loginUiState.value = LoginUiState(
                         isLoggingIn = true
                     )
-                    delay(2000)
                     try{
                         val loginResponse = loginRepo.login(userName,password)
+                        if(loginResponse.isSuccessful){
+                            println(loginResponse.body())
+                            dataStoreUtil.saveUserInfo(
+                                loginResponse.body()?.accessToken,
+                                loginResponse.body()?.userName
+                            )
+                            _loginUiState.value = LoginUiState(
+                                isUserLoggedIn = true
+                            )
+                        }
+                        else{
+                            _loginUiState.value = LoginUiState(
+                                message = Message.LOGIN_FAIL
+                            )
+                        }
+                    }
+                    catch(exception : ConnectException){
                         _loginUiState.value = LoginUiState(
-                            isUserLoggedIn = true
+                            message = Message.NO_INTERNET_CONNECTION,
                         )
-                    }catch(exception : Exception){
+                    }
+                    catch (exception : Exception){
                         _loginUiState.value = LoginUiState(
-                            errorMessage = ErrorMessage.NO_INTERNET_CONNECTION,
+                            message = Message.SOMETHING_WRONG,
                         )
                     }
                 }

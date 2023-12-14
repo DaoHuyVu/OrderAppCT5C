@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/menu_item"
+    android:layout_width="match_parent"
+    android:layout_height="300dp">
+    <ImageView
+        android:id="@+id/menu_item_image"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:scaleType="centerCrop"
+        tools:src="@drawable/beef_rendang"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/item_name_background"/>
+
+    <TextView
+        android:id="@+id/menu_item_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:fontFamily="serif"
+        android:padding="10dp"
+        android:textSize="@dimen/textSize"
+        tools:text="Name" />
+        <TextView
+            android:id="@+id/menu_item_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="$10.00"
+            android:textSize="@dimen/textSize"
+            android:padding="10dp"
+            android:layout_gravity="bottom|end"/>
+</androidx.cardview.widget.CardView>

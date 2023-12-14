@@ -1,9 +1,13 @@
 package com.example.orderappct5c
 
-enum class ErrorMessage {
+enum class Message {
     USERNAME_EMPTY,
     PASSWORD_EMPTY,
     NO_INTERNET_CONNECTION,
     SIGN_UP_FAIL,
-    LOGIN_FAIL
+    LOGIN_FAIL,
+    SOMETHING_WRONG,
+    ADDED_FAIL,
+    ADD_SUCCESSFULLY,
+    ORDER_SUCCESSFULLY
 }

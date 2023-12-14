@@ -7,12 +7,12 @@ import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.example.orderappct5c.ErrorMessage
+import androidx.navigation.fragment.findNavController
+import com.example.orderappct5c.Message
 import com.example.orderappct5c.R
 import com.example.orderappct5c.databinding.FragmentSignupBinding
 import com.example.orderappct5c.util.showToast
 import dagger.hilt.android.AndroidEntryPoint
-
 @AndroidEntryPoint
 class SignUpFragment : Fragment() {
     private var _binding : FragmentSignupBinding? = null
@@ -37,13 +37,13 @@ class SignUpFragment : Fragment() {
             passwordInputSignup.apply{
                 setText(signUpViewModel.password)
                 doOnTextChanged{ password,_,_,_ ->
-                    signUpViewModel.userNameChange(password.toString())
+                    signUpViewModel.passwordChange(password.toString())
                 }
             }
             emailInputSignup.apply{
                 setText(signUpViewModel.email)
                 doOnTextChanged{ email,_,_,_ ->
-                    signUpViewModel.userNameChange(email.toString())
+                    signUpViewModel.emailChange(email.toString())
                 }
             }
             signupButton.apply {
@@ -65,16 +65,16 @@ class SignUpFragment : Fragment() {
                         signupButton.isEnabled = true
                         signupProgressbar.visibility = View.GONE
                     }
-                    if(it.isUserSignUpSuccessfully){
-                        //navigate to home screen
-                        showToast("Login successfully")
+                    if(it.isSignUpSuccessfully){
+                        findNavController().navigate(SignUpFragmentDirections.actionSignUpFragmentToAfterSignUpFragment())
                     }
                     else{
-                        it.errorMessage?.let{errorMessage ->
+                        it.message?.let{ errorMessage ->
                             when(errorMessage){
-                                ErrorMessage.NO_INTERNET_CONNECTION -> showToast(getString(R.string.no_internet_connection))
-                                ErrorMessage.SIGN_UP_FAIL -> showToast(getString(R.string.sign_up_fail))
-                                else -> {}
+                                Message.NO_INTERNET_CONNECTION -> showToast(getString(R.string.no_internet_connection))
+                                Message.SIGN_UP_FAIL -> showToast(getString(R.string.sign_up_fail))
+                                Message.SOMETHING_WRONG -> showToast(getString(R.string.something_wrong))
+                                else -> throw IllegalStateException()
                             }
                             signUpViewModel.errorMessageShown()
                         }
@@ -85,12 +85,11 @@ class SignUpFragment : Fragment() {
         signUpViewModel.signUpUiFormState.observe(viewLifecycleOwner){
             it?.let{
                 binding.apply {
-                    usernameInputSignupLayout.isHelperTextEnabled = it.userNameInvalid
-                    passwordInputSignupLayout.isHelperTextEnabled = it.passwordInvalid
-                    emailInputSignupLayout.isHelperTextEnabled = it.emailInvalid
+                    usernameInputSignupLayout.helperText = if(it.userNameInvalid) getString(R.string.invalid_username) else ""
+                    passwordInputSignupLayout.helperText = if(it.passwordInvalid) getString(R.string.invalid_password) else ""
+                    emailInputSignupLayout.helperText = if(it.emailInvalid) getString(R.string.invalid_email) else ""
                 }
-                if(!it.passwordInvalid && !it.emailInvalid && !it.userNameInvalid)
-                    binding.signupButton.isEnabled = true
+                binding.signupButton.isEnabled = !it.passwordInvalid && !it.emailInvalid && !it.userNameInvalid
             }
         }
     }

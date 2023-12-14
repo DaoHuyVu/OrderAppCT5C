@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.signup.AfterSignUpFragment"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:lineSpacingExtra="5dp"
+        android:gravity="center"
+        android:text="@string/sign_up_successfully"/>
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/back_to_login"
+        android:drawableStart="@drawable/baseline_arrow_back_24"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/back_to_login_label"/>
+</LinearLayout>

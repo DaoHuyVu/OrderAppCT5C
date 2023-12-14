@@ -1,12 +1,25 @@
 package com.example.orderappct5c.di
 
-import com.example.orderappct5c.api.login.LoginService
+
+import com.example.orderappct5c.api.auth.AuthService
+import com.example.orderappct5c.api.cart.CartService
+import com.example.orderappct5c.api.menu.TokenInterceptor
+import com.example.orderappct5c.api.menu.okhttpannotation.TokenInterceptorOkHttp
+import com.example.orderappct5c.api.menu.MenuService
+import com.example.orderappct5c.api.menu.dispatchers.IODispatchers
+import com.example.orderappct5c.api.order.OrderDetailsService
+import com.example.orderappct5c.ui.home.menu.itemdetail.OrderItem
+
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import retrofit2.Retrofit
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit.Builder
 import retrofit2.converter.moshi.MoshiConverterFactory
+
 import javax.inject.Singleton
 
 
@@ -15,11 +28,45 @@ import javax.inject.Singleton
 object AppModule {
     @Provides
     @Singleton
-    fun provideRetrofit() : Retrofit = Retrofit.Builder()
-        .baseUrl("http://192.168.1.4:9192")
-        .addConverterFactory(MoshiConverterFactory.create())
-        .build()
+    fun provideRetrofit() : Builder {
+        return Builder()
+            .baseUrl("https://terrier-modern-violently.ngrok-free.app")
+            .addConverterFactory(MoshiConverterFactory.create())
+    }
     @Provides
     @Singleton
-    fun provideLoginService(retrofit: Retrofit): LoginService = retrofit.create(LoginService::class.java)
+    @TokenInterceptorOkHttp
+    fun provideMenuInterceptorOkHttp(
+        tokenInterceptor: TokenInterceptor
+    ) : OkHttpClient = OkHttpClient.Builder().addInterceptor(tokenInterceptor).build()
+
+    @Provides
+    @Singleton
+    fun provideLoginService(retrofit: Builder): AuthService
+        = retrofit.build().create(AuthService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideMenuService(
+        retrofit: Builder,
+        @TokenInterceptorOkHttp okHttpClient: OkHttpClient
+    ) : MenuService
+        = retrofit.client(okHttpClient).build().create(MenuService::class.java)
+    @Provides
+    @Singleton
+    fun provideCartService(
+        retrofit: Builder,
+        @TokenInterceptorOkHttp okHttpClient: OkHttpClient
+    ) : CartService = retrofit.client(okHttpClient).build().create(CartService::class.java)
+
+    @Provides
+    @Singleton
+    @IODispatchers
+    fun provideDispatchers() : CoroutineDispatcher = Dispatchers.IO
+    @Provides
+    @Singleton
+    fun provideOrderService(
+        retrofit: Builder,
+        @TokenInterceptorOkHttp okHttpClient: OkHttpClient
+    ) : OrderDetailsService = retrofit.client(okHttpClient).build().create(OrderDetailsService::class.java)
 }

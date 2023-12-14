@@ -6,17 +6,18 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.example.orderappct5c.ErrorMessage
+import androidx.navigation.fragment.findNavController
+import com.example.orderappct5c.Message
 import com.example.orderappct5c.R
 import com.example.orderappct5c.databinding.FragmentLoginBinding
+import com.example.orderappct5c.ui.EntryFragment
+import com.example.orderappct5c.util.replaceNavGraph
 import com.example.orderappct5c.util.showToast
 import dagger.hilt.android.AndroidEntryPoint
 
-
 @AndroidEntryPoint
-class LoginFragment : Fragment() {
+class LoginFragment : EntryFragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding: FragmentLoginBinding get() = _binding!!
     private val loginViewModel: LoginViewModel by viewModels()
@@ -52,44 +53,51 @@ class LoginFragment : Fragment() {
                     loginViewModel.login()
                 }
             }
-
+            signUpTextNavigation.setOnClickListener {
+                findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToSignUpFragment())
+            }
         }
         loginViewModel.loginUiState.observe(viewLifecycleOwner){
-            it.let{
                 if(it.isLoggingIn){
                     binding.apply {
                         loginProgressbar.visibility = View.VISIBLE
                         loginButton.isEnabled = false
+                        signUpTextNavigation.isEnabled = false
                     }
                 }
                 else{
                     binding.apply{
-                        loginProgressbar.visibility = View.GONE
+                        loginProgressbar.visibility = View.INVISIBLE
                         loginButton.isEnabled = true
+                        signUpTextNavigation.isEnabled = true
                     }
                     if(it.isUserLoggedIn){
-                        //navigate to Home Screen
-                        showToast(getString(R.string.login_successfully))
+                        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToSignUpFragment())
+                        replaceNavGraph()
+                        login()
                     }
                     else{
-                        it.errorMessage?.let{ msg ->
+                        it.message?.let{ msg ->
                             when(msg){
-                                ErrorMessage.USERNAME_EMPTY -> showToast(getString(R.string.username_empty))
-                                ErrorMessage.NO_INTERNET_CONNECTION -> showToast(getString(R.string.no_internet_connection))
-                                ErrorMessage.PASSWORD_EMPTY -> showToast(getString(R.string.password_empty))
+                                Message.USERNAME_EMPTY -> showToast(getString(R.string.username_empty))
+                                Message.NO_INTERNET_CONNECTION -> showToast(getString(R.string.no_internet_connection))
+                                Message.PASSWORD_EMPTY -> showToast(getString(R.string.password_empty))
+                                Message.LOGIN_FAIL -> showToast(getString(R.string.login_fail))
+                                Message.SOMETHING_WRONG -> showToast(getString(R.string.something_wrong))
+                                else -> throw IllegalStateException()
                             }
-                            loginViewModel.errorMessageShown() }
+                            loginViewModel.errorMessageShown()
+                        }
                     }
                 }
-            }
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
 
+    }
     private class EditTextWatcher(private val onChange : (String) -> Unit) : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -97,5 +105,4 @@ class LoginFragment : Fragment() {
         }
         override fun afterTextChanged(s: Editable?) {}
     }
-
 }

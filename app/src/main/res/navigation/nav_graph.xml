@@ -3,11 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/loginFragment">
+    app:startDestination="@id/splashFragment">
 
     <fragment
-        android:id="@+id/loginFragment"
-        android:name="com.example.orderappct5c.ui.login.LoginFragment"
-        android:label="fragment_login"
-        tools:layout="@layout/fragment_login" />
+        android:id="@+id/splashFragment"
+        android:name="com.example.orderappct5c.SplashFragment"
+        android:label="fragment_splash"
+        tools:layout="@layout/fragment_splash" >
+        <action
+            android:id="@+id/action_splashFragment_to_home_nav_graph"
+            app:destination="@id/home_nav_graph"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splashFragment_to_auth_nav_graph"
+            app:destination="@id/auth_nav_graph"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
+
+    </fragment>
+    <include app:graph="@navigation/home_nav_graph" />
+    <include app:graph="@navigation/auth_nav_graph" />
 </navigation>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/categoryFragment"
+        android:title="@string/category_label"
+        android:orderInCategory="1"
+        android:icon="@drawable/baseline_home_24"
+        />
+    <item
+        android:id="@+id/cartFragment"
+        android:title="@string/cart_label"
+        android:orderInCategory="2"
+        android:icon="@drawable/baseline_shopping_cart_24"
+        />
+    <item
+        android:id="@+id/personalFragment"
+        android:title="@string/personal_label"
+        android:orderInCategory="3"
+        android:icon="@drawable/baseline_person_pin_24"
+        />
+</menu>

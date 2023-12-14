@@ -1,10 +1,10 @@
 package com.example.orderappct5c.ui.signup
 
-import com.example.orderappct5c.ErrorMessage
+import com.example.orderappct5c.Message
 
 data class SignUpUiState(
-    val isUserSignUpSuccessfully : Boolean = false,
+    val isSignUpSuccessfully : Boolean = false,
     val isLoading : Boolean = false,
-    val errorMessage : ErrorMessage? = null,
+    val message : Message? = null,
 
-)
+    )
