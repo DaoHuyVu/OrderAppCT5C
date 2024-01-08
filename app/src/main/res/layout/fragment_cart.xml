@@ -55,4 +55,15 @@
         android:visibility="gone"
         tools:visibility="visible"
         />
+
+    <TextView
+        android:id="@+id/no_order_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_order_item"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/start_ordering_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/cart_list" />
 </androidx.constraintlayout.widget.ConstraintLayout>

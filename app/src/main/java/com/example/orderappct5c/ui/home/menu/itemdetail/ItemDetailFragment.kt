@@ -15,6 +15,7 @@ import com.example.orderappct5c.Message
 import com.example.orderappct5c.R
 import com.example.orderappct5c.databinding.FragmentItemDetailBinding
 import com.example.orderappct5c.util.API_PREFIX
+import com.example.orderappct5c.util.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 @AndroidEntryPoint
@@ -74,10 +75,11 @@ class ItemDetailFragment : Fragment() {
                 else{
                     if(it.message != null){
                         when(it.message){
-                            Message.ADD_SUCCESSFULLY -> Toast.makeText(requireActivity(),getString(R.string.added),Toast.LENGTH_SHORT).show()
-                            Message.ADDED_FAIL -> Toast.makeText(requireActivity(),getString(R.string.add_failed),Toast.LENGTH_SHORT).show()
-                            Message.SOMETHING_WRONG -> Toast.makeText(requireActivity(),getString(R.string.something_wrong),Toast.LENGTH_SHORT).show()
-                            else -> {}
+                            Message.ADD_SUCCESSFULLY -> showToast(getString(R.string.added))
+                            Message.ADDED_FAIL -> showToast(getString(R.string.add_failed))
+                            Message.SERVER_BREAKDOWN -> showToast(getString(R.string.server_breakdown))
+                            Message.NO_INTERNET_CONNECTION -> showToast(getString(R.string.no_internet_connection))
+                            else -> throw IllegalStateException()
                         }
                         viewModel.errorMessageShown()
                     }

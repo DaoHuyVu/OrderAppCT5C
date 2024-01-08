@@ -73,7 +73,7 @@ class SignUpFragment : Fragment() {
                             when(errorMessage){
                                 Message.NO_INTERNET_CONNECTION -> showToast(getString(R.string.no_internet_connection))
                                 Message.SIGN_UP_FAIL -> showToast(getString(R.string.sign_up_fail))
-                                Message.SOMETHING_WRONG -> showToast(getString(R.string.something_wrong))
+                                Message.SERVER_BREAKDOWN -> showToast(getString(R.string.server_breakdown))
                                 else -> throw IllegalStateException()
                             }
                             signUpViewModel.errorMessageShown()
@@ -85,9 +85,9 @@ class SignUpFragment : Fragment() {
         signUpViewModel.signUpUiFormState.observe(viewLifecycleOwner){
             it?.let{
                 binding.apply {
-                    usernameInputSignupLayout.helperText = if(it.userNameInvalid) getString(R.string.invalid_username) else ""
-                    passwordInputSignupLayout.helperText = if(it.passwordInvalid) getString(R.string.invalid_password) else ""
-                    emailInputSignupLayout.helperText = if(it.emailInvalid) getString(R.string.invalid_email) else ""
+                    invalidUsername.visibility = if(it.userNameInvalid) View.VISIBLE else View.INVISIBLE
+                    invalidEmail.visibility = if(it.passwordInvalid) View.VISIBLE else View.INVISIBLE
+                    invalidPassword.visibility = if(it.emailInvalid) View.VISIBLE else View.INVISIBLE
                 }
                 binding.signupButton.isEnabled = !it.passwordInvalid && !it.emailInvalid && !it.userNameInvalid
             }

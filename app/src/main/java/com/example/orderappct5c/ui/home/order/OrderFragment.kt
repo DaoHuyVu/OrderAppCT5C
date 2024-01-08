@@ -1,6 +1,7 @@
 package com.example.orderappct5c.ui.home.order
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,8 @@ import android.widget.ArrayAdapter
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
+import androidx.navigation.fragment.findNavController
+import com.example.orderappct5c.Message
 import com.example.orderappct5c.R
 import com.example.orderappct5c.databinding.FragmentOrderBinding
 import com.example.orderappct5c.util.showToast
@@ -52,7 +55,7 @@ class OrderFragment : Fragment(){
                     viewModel.makeOrder()
                 }
         }
-        viewModel.branch.observe(viewLifecycleOwner){
+        viewModel.store.observe(viewLifecycleOwner){
             it?.let{
                 val adapter = ArrayAdapter(
                     requireActivity(),
@@ -67,14 +70,25 @@ class OrderFragment : Fragment(){
             binding.apply {
                 progressBar.visibility = if(it.isLoading) View.VISIBLE else View.GONE
                 progressBarContainer.visibility = if(it.isLoading) View.VISIBLE else View.GONE
-                it.message?.let{
-                        errorMessage -> showToast(errorMessage)
-                        viewModel.messageShown()
+                it.message?.let{message ->
+                    when(message){
+                        Message.SERVER_BREAKDOWN -> showToast(getString(R.string.server_breakdown))
+                        Message.NO_INTERNET_CONNECTION -> showToast(getString(R.string.no_internet_connection))
+                        Message.LOAD_ERROR -> showToast(getString(R.string.load_error))
+                        Message.ORDER_SUCCESSFULLY -> showToast(getString(R.string.order_successfully))
+                        Message.ORDER_FAIL -> showToast(getString(R.string.order_fail))
+                        else -> throw IllegalStateException()
+                    }
+                    viewModel.messageShown()
                 }
                 usernameInputInvalid.visibility = if(it.isUserNameValid) View.INVISIBLE else View.VISIBLE
                 phoneInputInvalid.visibility = if(it.isPhoneNumberValid) View.INVISIBLE else View.VISIBLE
                 addressInputInvalid.visibility = if(it.isAddressValid) View.INVISIBLE else View.VISIBLE
                 orderButton.isEnabled = it.isAddressValid && it.isUserNameValid && it.isPhoneNumberValid
+                if(it.isOrderSuccessFully){
+                    findNavController().popBackStack(R.id.cartFragment,true)
+                    viewModel.orderedSuccessfully()
+                }
             }
         }
     }

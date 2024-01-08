@@ -10,6 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.distinctUntilChanged
 import androidx.navigation.fragment.findNavController
+import com.example.orderappct5c.Message
 import com.example.orderappct5c.R
 import com.example.orderappct5c.databinding.FragmentCartBinding
 import com.example.orderappct5c.util.showToast
@@ -37,32 +38,39 @@ class CartFragment : Fragment() {
                 viewModel.removeItem(it)
             }
         }
+        viewModel.cartUiState.observe(viewLifecycleOwner){
+            binding.apply {
+                progressBar.visibility = if(it.isLoading) View.VISIBLE else View.GONE
+                it.message?.let{message ->
+                    when(message){
+                        Message.SERVER_BREAKDOWN -> showToast(getString(R.string.server_breakdown))
+                        Message.NO_INTERNET_CONNECTION -> showToast(getString(R.string.no_internet_connection))
+                        Message.MODIFIED_FAIL -> showToast(getString(R.string.modify_fail))
+                        Message.REMOVED_FAIL -> showToast(getString(R.string.removed_fail))
+                        Message.LOAD_ERROR -> showToast(getString(R.string.load_error))
+                        else -> throw IllegalStateException()
+                    }
+                    viewModel.messageShown()
+                }
+                if(!it.isLoading){
+                    it.cartList.let { list ->
+                        noOrderItem.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
+                        startOrderingButton.isEnabled = list.isNotEmpty()
+                        cartAdapter.submitList(list)
+                    }
+                }
+            }
+        }
         binding.apply {
             cartList.adapter = cartAdapter
             startOrderingButton.setOnClickListener {
                 findNavController().navigate(CartFragmentDirections.actionCartFragmentToOrderFragment())
             }
         }
-        viewModel.cartUiState.observe(viewLifecycleOwner){
-            if(it.isLoading){
-                binding.progressBar.visibility = View.VISIBLE
-            }
-            else{
-                binding.apply {
-                    if(it.message != null){
-                        showToast(it.message)
-                        viewModel.errorMessageShown()
-                    }
-                    else{
-                        progressBar.visibility = View.GONE
-                        cartAdapter.submitList(it.cartList)
-                    }
-                }
-            }
-        }
         viewModel.totalPrice.observe(viewLifecycleOwner){
             binding.totalPrice.text = getString(R.string.total,it)
         }
+        viewModel.getList()
     }
     private fun shownDialog(callback : () -> Unit){
         AlertDialog

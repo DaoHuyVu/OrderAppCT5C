@@ -1,10 +1,10 @@
 package com.example.orderappct5c.ui.home.cart
 
-import com.example.orderappct5c.ui.home.menu.itemdetail.OrderItem
-import java.util.LinkedList
+import com.example.orderappct5c.Message
+import com.example.orderappct5c.ui.home.menu.itemdetail.OrderItemDto
 
 data class CartUiState(
     val isLoading : Boolean = false,
-    val cartList : LinkedList<OrderItem>? = null,
-    val message : String? = null
+    val cartList : List<OrderItemDto> = listOf(),
+    val message : Message? = null
 )

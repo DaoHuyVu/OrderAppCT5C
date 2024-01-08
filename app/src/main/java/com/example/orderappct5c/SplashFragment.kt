@@ -1,5 +1,8 @@
 package com.example.orderappct5c
 
+import android.graphics.BitmapFactory
+import android.graphics.drawable.VectorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,11 +13,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.orderappct5c.ui.EntryFragment
 import com.example.orderappct5c.util.DataStoreUtil
-import com.example.orderappct5c.util.replaceNavGraph
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
 import javax.inject.Inject
 @AndroidEntryPoint
 class SplashFragment : EntryFragment(){
@@ -35,14 +38,12 @@ class SplashFragment : EntryFragment(){
             delay(1000L)
             if(token != null){
                 findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToHomeNavGraph())
-                replaceNavGraph()
-                login()
+                toHomeScreen()
             }
             else {
                 findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToAuthNavGraph())
             }
         }
-        job.start()
     }
 
 

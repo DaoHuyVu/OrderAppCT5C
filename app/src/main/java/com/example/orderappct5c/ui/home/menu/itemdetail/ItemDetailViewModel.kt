@@ -47,10 +47,10 @@ class ItemDetailViewModel @AssistedInject constructor(
     fun addToCart(){
         _itemDetailUiState.value = _itemDetailUiState.value?.copy(isLoading = true)
         viewModelScope.launch {
-            when(cartRepository.addToCart(itemDetailUiState.value!!.quantity,itemId)){
+            when(val result = cartRepository.addToCart(itemDetailUiState.value!!.quantity,itemId)){
                 is ApiResult.Success -> _itemDetailUiState.value = _itemDetailUiState.value?.copy(isLoading = false,message = Message.ADD_SUCCESSFULLY)
-                is ApiResult.Failure -> _itemDetailUiState.value = _itemDetailUiState.value?.copy(isLoading = false,message = Message.ADDED_FAIL)
-                is ApiResult.Exception -> _itemDetailUiState.value = _itemDetailUiState.value?.copy(isLoading = false,message = Message.SOMETHING_WRONG)
+                is ApiResult.Failure -> _itemDetailUiState.value = _itemDetailUiState.value?.copy(isLoading = false,message = result.message)
+                is ApiResult.Exception -> _itemDetailUiState.value = _itemDetailUiState.value?.copy(isLoading = false,message = Message.SERVER_BREAKDOWN)
             }
         }
     }

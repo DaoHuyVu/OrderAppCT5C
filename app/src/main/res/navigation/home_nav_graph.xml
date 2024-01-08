@@ -18,14 +18,13 @@
         android:name="com.example.orderappct5c.ui.home.personal.PersonalFragment"
         android:label="Personal"
         tools:layout="@layout/fragment_personal" >
-
         <action
-            android:id="@+id/action_personalFragment_to_auth_nav_graph"
-            app:destination="@id/auth_nav_graph"
-            app:popUpTo="@id/categoryFragment"
-            app:popUpToInclusive="true" />
+            android:id="@+id/action_personalFragment_to_orderHistoryFragment"
+            app:destination="@id/orderHistoryFragment" />
+        <action
+            android:id="@+id/action_personalFragment_to_resetPasswordFragment"
+            app:destination="@id/resetPasswordFragment" />
     </fragment>
-    <include app:graph="@navigation/auth_nav_graph" />
     <fragment
         android:id="@+id/menuItemsFragment"
         android:name="com.example.orderappct5c.ui.home.menu.menuitems.MenuItemsFragment"
@@ -60,5 +59,29 @@
         android:id="@+id/orderFragment"
         android:name="com.example.orderappct5c.ui.home.order.OrderFragment"
         android:label="Order"
-        tools:layout="@layout/fragment_order" />
+        tools:layout="@layout/fragment_order" >
+    </fragment>
+    <fragment
+        android:id="@+id/orderHistoryFragment"
+        android:name="com.example.orderappct5c.ui.home.personal.history.OrderHistoryFragment"
+        android:label="History"
+        tools:layout="@layout/fragment_order_history" >
+        <action
+            android:id="@+id/action_orderHistoryFragment_to_orderDetailsFragment"
+            app:destination="@id/orderDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/orderDetailsFragment"
+        android:name="com.example.orderappct5c.ui.home.personal.details.OrderDetailsFragment"
+        android:label="Order details"
+        tools:layout="@layout/fragment_order_details">
+        <argument
+            android:name="id"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/resetPasswordFragment"
+        android:name="com.example.orderappct5c.ui.home.personal.resetpassword.ResetPasswordFragment"
+        android:label="Reset password"
+        tools:layout="@layout/fragment_reset_password" />
 </navigation>

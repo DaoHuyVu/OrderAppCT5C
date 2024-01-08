@@ -68,7 +68,7 @@ class SignUpViewModel @Inject constructor(
             catch(ex : ConnectException){
                 _signUpUiState.value = SignUpUiState(message = Message.NO_INTERNET_CONNECTION)
             }catch(ex : Exception){
-                _signUpUiState.value = SignUpUiState(message = Message.SOMETHING_WRONG)
+                _signUpUiState.value = SignUpUiState(message = Message.SERVER_BREAKDOWN)
             }
         }
     }

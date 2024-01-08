@@ -12,7 +12,6 @@ import com.example.orderappct5c.Message
 import com.example.orderappct5c.R
 import com.example.orderappct5c.databinding.FragmentLoginBinding
 import com.example.orderappct5c.ui.EntryFragment
-import com.example.orderappct5c.util.replaceNavGraph
 import com.example.orderappct5c.util.showToast
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -72,9 +71,7 @@ class LoginFragment : EntryFragment() {
                         signUpTextNavigation.isEnabled = true
                     }
                     if(it.isUserLoggedIn){
-                        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToSignUpFragment())
-                        replaceNavGraph()
-                        login()
+                        toHomeScreen()
                     }
                     else{
                         it.message?.let{ msg ->
@@ -83,7 +80,7 @@ class LoginFragment : EntryFragment() {
                                 Message.NO_INTERNET_CONNECTION -> showToast(getString(R.string.no_internet_connection))
                                 Message.PASSWORD_EMPTY -> showToast(getString(R.string.password_empty))
                                 Message.LOGIN_FAIL -> showToast(getString(R.string.login_fail))
-                                Message.SOMETHING_WRONG -> showToast(getString(R.string.something_wrong))
+                                Message.SERVER_BREAKDOWN -> showToast(getString(R.string.server_breakdown))
                                 else -> throw IllegalStateException()
                             }
                             loginViewModel.errorMessageShown()

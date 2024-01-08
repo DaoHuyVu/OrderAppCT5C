@@ -1,12 +1,8 @@
 package com.example.orderappct5c.ui
 
 import android.content.Context
-import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import com.example.orderappct5c.OnLoginListener
 
 
@@ -20,7 +16,7 @@ open class EntryFragment : Fragment(){
             Log.e("Exception","Must implement the interface first")
         }
     }
-    protected fun login(){
-        onLoginListener.login()
+    protected fun toHomeScreen(){
+        onLoginListener.toHomeScreen()
     }
 }

@@ -11,6 +11,7 @@ import com.example.orderappct5c.util.DataStoreUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.net.ConnectException
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -57,7 +58,6 @@ class LoginViewModel @Inject constructor(
                     try{
                         val loginResponse = loginRepo.login(userName,password)
                         if(loginResponse.isSuccessful){
-                            println(loginResponse.body())
                             dataStoreUtil.saveUserInfo(
                                 loginResponse.body()?.accessToken,
                                 loginResponse.body()?.userName
@@ -72,14 +72,14 @@ class LoginViewModel @Inject constructor(
                             )
                         }
                     }
-                    catch(exception : ConnectException){
+                    catch(exception : UnknownHostException){
                         _loginUiState.value = LoginUiState(
                             message = Message.NO_INTERNET_CONNECTION,
                         )
                     }
                     catch (exception : Exception){
                         _loginUiState.value = LoginUiState(
-                            message = Message.SOMETHING_WRONG,
+                            message = Message.SERVER_BREAKDOWN,
                         )
                     }
                 }

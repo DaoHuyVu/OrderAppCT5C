@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.30" />
+        app:layout_constraintGuide_percent="0.3" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/username_input_signup_layout"
@@ -20,19 +20,29 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        app:helperTextTextColor="@color/red"
-        app:helperText="@string/invalid_username"
-        app:startIconDrawable="@drawable/baseline_person_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline3">
+        app:layout_constraintTop_toTopOf="@+id/guideline3"
+        app:startIconDrawable="@drawable/baseline_person_24">
+
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/username_input_signup"
             android:layout_width="match_parent"
-            android:inputType="text"
             android:layout_height="match_parent"
-            android:hint="@string/Username_hint" />
+            android:hint="@string/Username_hint"
+            android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/invalid_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/invalid_username"
+        android:textColor="@color/orange"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/username_input_signup_layout" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/email_input_signup_layout"
@@ -42,21 +52,31 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        app:helperTextEnabled="true"
-        app:helperTextTextColor="@color/red"
-        app:helperText="@string/invalid_email"
-        app:startIconDrawable="@drawable/baseline_email_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username_input_signup_layout">
+        app:layout_constraintTop_toBottomOf="@+id/invalid_username"
+        app:startIconDrawable="@drawable/baseline_email_24">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/email_input_signup"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:inputType="textEmailAddress"
-            android:hint="@string/email_hint" />
+            android:hint="@string/email_hint"
+            android:inputType="textEmailAddress" />
+
     </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/invalid_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/invalid_email"
+        android:textColor="@color/orange"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/email_input_signup_layout" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/password_input_signup_layout"
         style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
@@ -65,23 +85,32 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        app:helperTextEnabled="true"
-        app:helperTextTextColor="@color/red"
-        app:helperText="@string/invalid_password"
-        app:startIconDrawable="@drawable/baseline_password_24"
         app:layout_constraintEnd_toEndOf="parent"
-        app:passwordToggleEnabled="true"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email_input_signup_layout">
+        app:layout_constraintTop_toBottomOf="@+id/invalid_email"
+        app:passwordToggleEnabled="true"
+        app:startIconDrawable="@drawable/baseline_password_24">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/password_input_signup"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:inputType="textPassword"
-            android:hint="@string/password_hint" />
+            android:hint="@string/password_hint"
+            android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <TextView
+        android:id="@+id/invalid_password"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/invalid_password"
+        android:textColor="@color/orange"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/password_input_signup_layout" />
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/signup_button"
         android:layout_width="match_parent"
@@ -90,12 +119,10 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:text="@string/signup"
-        android:enabled="false"
-        android:textColor="@color/white"
         android:background="@drawable/login_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password_input_signup_layout" />
+        app:layout_constraintTop_toBottomOf="@+id/invalid_password" />
 
     <ProgressBar
         android:id="@+id/signup_progressbar"

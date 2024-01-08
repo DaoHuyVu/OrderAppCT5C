@@ -1,22 +1,16 @@
 package com.example.orderappct5c.ui.home.cart
 
-import android.app.Application
-import android.util.Log
-import androidx.preference.Preference
+import com.example.orderappct5c.Message
 import com.example.orderappct5c.api.cart.CartService
 import com.example.orderappct5c.api.menu.dispatchers.IODispatchers
 import com.example.orderappct5c.data.ApiResult
-import com.example.orderappct5c.data.ErrorResponse
-import com.example.orderappct5c.ui.home.menu.itemdetail.OrderItem
-import com.example.orderappct5c.util.Converter
+import com.example.orderappct5c.ui.home.menu.itemdetail.OrderItemDto
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import java.net.UnknownHostException
 import java.util.LinkedList
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -27,72 +21,104 @@ class CartRepository @Inject constructor(
     @IODispatchers private val dispatcher : CoroutineDispatcher = Dispatchers.IO,
 ){
     private val repositoryScope = CoroutineScope(dispatcher)
-    private var orderItems = LinkedList<OrderItem>()
+    private var orderItemDtos = LinkedList<OrderItemDto>()
     init{
         repositoryScope.launch{
-            val response = cartService.getCartList()
-            orderItems =
-                if(response.isSuccessful || response.body() != null) LinkedList(response.body()!!)
-                else LinkedList()
+            fetchCartList()
         }
     }
-    private suspend fun fetchCartList() : ApiResult<LinkedList<OrderItem>>{
-        return try{
+    private suspend fun fetchCartList(){
+        try{
             val response = cartService.getCartList()
             if(response.isSuccessful){
-                if(orderItems.isEmpty()){
-                    orderItems = LinkedList(response.body()!!)
-                }
-                ApiResult.Success(data = orderItems)
+                orderItemDtos = LinkedList(response.body()!!)
             }
-            else {
-                val errorResponse = Converter.stringToObject<ErrorResponse>(response.errorBody()!!.toString())
-                ApiResult.Failure(errorResponse)
-            }
-        }catch (ex : Exception){
-            ApiResult.Exception(ex)
-        }
+        }catch (_: Exception){ }
     }
-    suspend fun addToCart(quantity : Int,id : Long) : ApiResult<OrderItem>{
+    suspend fun addToCart(quantity : Int,id : Long) : ApiResult<OrderItemDto>{
         return withContext(dispatcher){
-            val response = cartService.addItem(id,quantity)
-            if(response.isSuccessful || response.body() != null){
-                val addedItem = response.body()!!
-                // add if not in orderItems otherwise update existing one
-                val index = orderItems.indexOfFirst{
-                        item -> item.id == addedItem.id
+            try {
+                val response = cartService.addItem(id, quantity)
+                if (response.isSuccessful || response.body() != null) {
+                    val addedItem = response.body()!!
+                    // add if not in orderItems otherwise update existing one
+                    val index = orderItemDtos.indexOfFirst { item ->
+                        item.id == addedItem.id
+                    }
+                    if (index != -1) {
+                        orderItemDtos[index] = addedItem
+                    } else {
+                        orderItemDtos.add(addedItem)
+                    }
+                    ApiResult.Success(addedItem)
                 }
-                if(index != -1){
-                    orderItems[index] = addedItem
-                }
-                else{
-                    orderItems.add(addedItem)
-                }
-                ApiResult.Success(addedItem)
+                else if(response.code() in 400 until 500)
+                    ApiResult.Failure(Message.ADDED_FAIL)
+                else ApiResult.Failure(Message.SERVER_BREAKDOWN)
             }
-            else ApiResult.Failure(Converter.stringToObject(response.errorBody().toString()))
+            catch(ex : UnknownHostException){
+                ApiResult.Failure(Message.NO_INTERNET_CONNECTION)
+            }
+            catch(ex : Exception){
+                ApiResult.Exception
+            }
         }
     }
-    suspend fun getCartList() : ApiResult<LinkedList<OrderItem>>{
-        return if(orderItems.isEmpty()) fetchCartList() else ApiResult.Success(orderItems)
-    }
-    fun getReadOnlyList() = orderItems.toList()
+    suspend fun fetchOrderItemList() : ApiResult<List<OrderItemDto>>{
+            return try{
+                val response = cartService.getCartList()
+                if(response.isSuccessful){
+                    orderItemDtos = LinkedList(response.body()!!)
+                    ApiResult.Success(data = orderItemDtos.toList())
+                }else if(response.code() in 400 until 500)
+                    ApiResult.Failure(Message.LOAD_ERROR)
+                else ApiResult.Failure(Message.SERVER_BREAKDOWN)
+            }catch(ex : UnknownHostException){
+                ApiResult.Failure(Message.NO_INTERNET_CONNECTION)
+            }
+            catch(ex : Exception){
+                ApiResult.Exception
+            }
+        }
 
-    suspend fun modifyQuantity(id : Long,quantity: Int) : ApiResult<LinkedList<OrderItem>>{
+    fun getList() = orderItemDtos.toList()
+
+    suspend fun modifyQuantity(id : Long,quantity: Int) : ApiResult<List<OrderItemDto>>{
         val response = cartService.patchItem(id,quantity)
-        return if(response.isSuccessful || response.body() != null){
-            val index = orderItems.indexOfFirst{item -> item.id == id}
-            orderItems[index] = response.body()!!
-            ApiResult.Success(orderItems)
+        return try{
+            if(response.isSuccessful || response.body() != null){
+                val index = orderItemDtos.indexOfFirst{ item -> item.id == id}
+                orderItemDtos[index] = response.body()!!
+                ApiResult.Success(orderItemDtos.toList())
+            }
+            else if(response.code() in 400 until 500)
+                ApiResult.Failure(Message.MODIFIED_FAIL)
+            else ApiResult.Failure(Message.SERVER_BREAKDOWN)
+        }catch(ex : UnknownHostException){
+            ApiResult.Failure(Message.NO_INTERNET_CONNECTION)
         }
-        else ApiResult.Failure(Converter.stringToObject(response.errorBody().toString()))
+        catch(ex : Exception){
+            ApiResult.Exception
+        }
     }
-    suspend fun removeItem(id : Long) : ApiResult<LinkedList<OrderItem>>{
+    suspend fun removeItem(id : Long) : ApiResult<List<OrderItemDto>>{
         val response = cartService.deleteItem(id)
-        return if(response.isSuccessful ){
-            orderItems.removeAt(orderItems.indexOfFirst { item -> item.id == id })
-            ApiResult.Success(orderItems)
+        return try{
+            if(response.isSuccessful ){
+                orderItemDtos.removeAt(orderItemDtos.indexOfFirst{ item -> item.id == id })
+                ApiResult.Success(orderItemDtos.toList())
+            }
+            else if(response.code() in 400 until 500)
+                ApiResult.Failure(Message.REMOVED_FAIL)
+            else ApiResult.Failure(Message.SERVER_BREAKDOWN)
+        }catch(ex : UnknownHostException){
+            ApiResult.Failure(Message.NO_INTERNET_CONNECTION)
         }
-        else ApiResult.Failure(Converter.stringToObject(response.errorBody().toString()))
+        catch(ex : Exception){
+            ApiResult.Exception
+        }
+    }
+    fun clearOrder(){
+        orderItemDtos.clear()
     }
 }

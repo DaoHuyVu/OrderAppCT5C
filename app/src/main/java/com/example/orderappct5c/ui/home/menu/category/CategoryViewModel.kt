@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.orderappct5c.Message
 import com.example.orderappct5c.data.ApiResult
 import com.example.orderappct5c.data.menu.MenuRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,9 +29,9 @@ class CategoryViewModel @Inject constructor(
                 is ApiResult.Success
                 -> _categoryUiState.value = CategoryUiState(categories = categories.data)
                 is ApiResult.Failure
-                -> _categoryUiState.value = CategoryUiState(errorMessage = categories.errorResponse.message)
+                -> _categoryUiState.value = CategoryUiState(errorMessage = categories.message)
                 is ApiResult.Exception
-                -> _categoryUiState.value = CategoryUiState(errorMessage = categories.throwable.message)
+                -> _categoryUiState.value = CategoryUiState(errorMessage = Message.SERVER_BREAKDOWN)
             }
         }
     }

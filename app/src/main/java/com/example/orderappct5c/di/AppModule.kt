@@ -8,7 +8,6 @@ import com.example.orderappct5c.api.menu.okhttpannotation.TokenInterceptorOkHttp
 import com.example.orderappct5c.api.menu.MenuService
 import com.example.orderappct5c.api.menu.dispatchers.IODispatchers
 import com.example.orderappct5c.api.order.OrderDetailsService
-import com.example.orderappct5c.ui.home.menu.itemdetail.OrderItem
 
 import dagger.Module
 import dagger.Provides

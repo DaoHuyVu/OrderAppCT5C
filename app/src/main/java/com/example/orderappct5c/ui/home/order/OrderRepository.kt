@@ -1,17 +1,17 @@
 package com.example.orderappct5c.ui.home.order
 
-import com.example.orderappct5c.api.cart.CartService
+import com.example.orderappct5c.Message
 import com.example.orderappct5c.api.menu.dispatchers.IODispatchers
 import com.example.orderappct5c.api.order.OrderDetails
 import com.example.orderappct5c.api.order.OrderDetailsService
 import com.example.orderappct5c.data.ApiResult
 import com.example.orderappct5c.api.order.StoreDto
-import com.example.orderappct5c.util.Converter
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -33,9 +33,14 @@ class OrderRepository @Inject constructor(
                 store = response.body()!!
                 ApiResult.Success(store)
             }
-            else ApiResult.Failure(Converter.stringToObject(response.errorBody().toString()))
-        }catch(ex : Exception){
-            ApiResult.Exception(ex)
+            else if(response.code() in 400 until 500)
+                ApiResult.Failure(Message.LOAD_ERROR)
+            else ApiResult.Failure(Message.SERVER_BREAKDOWN)
+        }catch(ex : UnknownHostException){
+            ApiResult.Failure(Message.NO_INTERNET_CONNECTION)
+        }
+        catch(ex : Exception){
+            ApiResult.Exception
         }
     }
     suspend fun getAllStore() : ApiResult<List<StoreDto>>{
@@ -43,14 +48,18 @@ class OrderRepository @Inject constructor(
 
     }
     suspend fun createOrder(map : Map<String,String>) : ApiResult<OrderDetails>{
-        return withContext(ioDispatchers){
-            try{
+        return withContext(ioDispatchers) {
+            try {
                 val response = orderDetailsService.createOrder(map)
-                if(response.isSuccessful)
+                if (response.isSuccessful)
                     ApiResult.Success(response.body()!!)
-                else ApiResult.Failure(Converter.stringToObject(response.errorBody().toString()))
-            }catch (ex : Exception){
-                ApiResult.Exception(ex)
+                else if (response.code() in 400 until 500)
+                    ApiResult.Failure(Message.ORDER_FAIL)
+                else ApiResult.Failure(Message.SERVER_BREAKDOWN)
+            } catch (ex: UnknownHostException) {
+                ApiResult.Failure(Message.NO_INTERNET_CONNECTION)
+            } catch (ex: Exception) {
+                ApiResult.Exception
             }
         }
     }

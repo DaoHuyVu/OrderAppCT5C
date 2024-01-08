@@ -1,10 +1,10 @@
 package com.example.orderappct5c.data.menu
 
+import com.example.orderappct5c.Message
 import com.example.orderappct5c.api.menu.MenuService
 import com.example.orderappct5c.data.ApiResult
-import com.example.orderappct5c.data.ErrorResponse
 import com.example.orderappct5c.ui.home.menu.category.Category
-import com.example.orderappct5c.util.Converter
+import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,12 +25,14 @@ class MenuRepository @Inject constructor(
                _menu = response.body() ?: emptyList()
                ApiResult.Success(menuUi)
            }
-           else{
-               val errorResponse = Converter.stringToObject<ErrorResponse>(response.errorBody()!!.string())
-               ApiResult.Failure(errorResponse)
-           }
-       }catch(throwable : Throwable){
-                ApiResult.Exception(throwable)
+           else if(response.code() in 400 until 500)
+               ApiResult.Failure(Message.LOAD_ERROR)
+           else ApiResult.Failure(Message.SERVER_BREAKDOWN)
+       }catch(ex : UnknownHostException){
+           ApiResult.Failure(Message.NO_INTERNET_CONNECTION)
+       }
+       catch(ex : Exception){
+           ApiResult.Exception
        }
     }
 
@@ -41,8 +43,6 @@ class MenuRepository @Inject constructor(
         return ApiResult.Success(menuUi)
     }
 
-
-
     private suspend fun fetchCategory() : ApiResult<List<Category>> {
         return try{
             val response = menuService.getCategory()
@@ -51,12 +51,14 @@ class MenuRepository @Inject constructor(
                     _category = response.body() ?: emptyList()
                 ApiResult.Success(_category)
             }
-            else{
-                val errorResponse = Converter.stringToObject<ErrorResponse>(response.errorBody()!!.string())
-                ApiResult.Failure(errorResponse)
-            }
-        }catch(throwable : Throwable){
-            ApiResult.Exception(throwable)
+            else if(response.code() in 400 until 500)
+                ApiResult.Failure(Message.LOAD_ERROR)
+            else ApiResult.Failure(Message.SERVER_BREAKDOWN)
+        }catch(ex : UnknownHostException){
+            ApiResult.Failure(Message.NO_INTERNET_CONNECTION)
+        }
+        catch(ex : Exception){
+            ApiResult.Exception
         }
     }
 

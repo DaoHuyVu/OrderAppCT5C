@@ -10,13 +10,3 @@ import com.example.orderappct5c.ui.LogoutFragment
 fun Fragment.showToast(message : String){
     Toast.makeText(requireActivity(),message,Toast.LENGTH_SHORT).show()
 }
-fun EntryFragment.replaceNavGraph(){
-    val navController = findNavController()
-    val navGraph = navController.navInflater.inflate(R.navigation.home_nav_graph)
-    navController.graph = navGraph
-}
-fun LogoutFragment.changeToAuthGraph(){
-    val navController = findNavController()
-    val navGraph = navController.navInflater.inflate(R.navigation.auth_nav_graph)
-    navController.graph = navGraph
-}

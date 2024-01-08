@@ -9,7 +9,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.example.orderappct5c.Message
+import com.example.orderappct5c.R
 import com.example.orderappct5c.databinding.FragmentCategoryBinding
+import com.example.orderappct5c.util.showToast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -36,17 +39,19 @@ class CategoryFragment : Fragment() {
             recyclerView.setHasFixedSize(true)
         }
         viewModel.categoryUiState.observe(viewLifecycleOwner){
-                if(it.isLoading){
-                    binding.progressBar.visibility = View.VISIBLE
+            binding.progressBar.visibility = if(it.isLoading) View.VISIBLE else View.GONE
+            it.errorMessage?.let{ message->
+                when(message){
+                    Message.SERVER_BREAKDOWN -> showToast(getString(R.string.server_breakdown))
+                    Message.NO_INTERNET_CONNECTION -> showToast(getString(R.string.no_internet_connection))
+                    Message.LOAD_ERROR -> showToast(getString(R.string.load_error))
+                    else -> throw IllegalStateException()
                 }
-                else{
-                    binding.progressBar.visibility = View.GONE
-                    categoryAdapter.submitList(it.categories)
-                    if(it.errorMessage != null){
-                        Toast.makeText(requireActivity(),it.errorMessage,Toast.LENGTH_SHORT).show()
-                        viewModel.errorMessageShown()
-                    }
-                }
+                viewModel.errorMessageShown()
+            }
+            if(!it.isLoading){
+                categoryAdapter.submitList(it.categories)
+            }
         }
     }
     override fun onDestroyView() {

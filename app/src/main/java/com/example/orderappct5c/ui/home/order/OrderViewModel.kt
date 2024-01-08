@@ -3,10 +3,8 @@ package com.example.orderappct5c.ui.home.order
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.orderappct5c.R
-import com.example.orderappct5c.api.order.OrderDetails
+import com.example.orderappct5c.Message
 import com.example.orderappct5c.data.ApiResult
-import com.example.orderappct5c.data.menu.OrderUiState
 import com.example.orderappct5c.api.order.StoreDto
 import com.example.orderappct5c.ui.home.cart.CartRepository
 import com.example.orderappct5c.util.DataStoreUtil
@@ -22,21 +20,21 @@ class OrderViewModel @Inject constructor(
 ) : ViewModel() {
     private val _orderUiState = MutableLiveData(OrderUiState())
     val orderUiState get() = _orderUiState
-    private val _branch = MutableLiveData<List<StoreDto>?>()
+    private val _store = MutableLiveData<List<StoreDto>?>()
     init{
         _orderUiState.value = OrderUiState(isLoading = true)
         viewModelScope.launch {
             when(val result = orderRepository.getAllStore()){
                 is ApiResult.Success -> {
-                    _branch.value = result.data
+                    _store.value = result.data
                     _orderUiState.value = OrderUiState(isLoading = false)
                 }
-                is ApiResult.Failure -> _orderUiState.value = OrderUiState(message = result.errorResponse.message)
-                is ApiResult.Exception -> _orderUiState.value = OrderUiState(message = result.throwable.message)
+                is ApiResult.Failure -> _orderUiState.value = OrderUiState(message = result.message)
+                is ApiResult.Exception -> _orderUiState.value = OrderUiState(message = Message.SERVER_BREAKDOWN)
             }
         }
     }
-    val branch get() = _branch
+    val store get() = _store
     var selectedStorePosition = 0
     var phoneNumber = ""
     var userName = dataStoreUtil.getUserName()
@@ -85,20 +83,24 @@ class OrderViewModel @Inject constructor(
             val map = hashMapOf<String,String>()
             map["phone"] = phoneNumber
             map["address"] = address
-            map["orderItemList"] = gson.toJson(cartRepository.getReadOnlyList())
-            map["price"] = gson.toJson(cartRepository.getReadOnlyList().fold(0.0){result,item -> result + item.price*item.quantity})
+            map["orderItemList"] = gson.toJson(cartRepository.getList())
+            map["price"] = gson.toJson(cartRepository.getList().fold(0.0){result,item -> result + item.price*item.quantity})
             map["userName"] = userName!!
-            map["storeDto"] = gson.toJson(_branch.value!![selectedStorePosition])
-
+            map["storeDto"] = gson.toJson(_store.value!![selectedStorePosition])
+            clearInput()
+            cartRepository.clearOrder()
             when(val result = orderRepository.createOrder(map)){
                 is ApiResult.Success -> {
-                    _orderUiState.value = OrderUiState(message = "Order successfully")
+                    _orderUiState.value = _orderUiState.value?.copy(message = Message.ORDER_SUCCESSFULLY, isLoading = false, isOrderSuccessFully = true)
                     clearInput()
                 }
-                is ApiResult.Failure -> _orderUiState.value = _orderUiState.value?.copy(message = result.errorResponse.message)
-                is ApiResult.Exception -> _orderUiState.value = _orderUiState.value?.copy(message = result.throwable.message)
+                is ApiResult.Failure -> _orderUiState.value = _orderUiState.value?.copy(message = result.message,isLoading = false)
+                is ApiResult.Exception -> _orderUiState.value = _orderUiState.value?.copy(message = Message.SERVER_BREAKDOWN,isLoading = false)
             }
         }
+    }
+    fun orderedSuccessfully(){
+        _orderUiState.value = _orderUiState.value?.copy(isOrderSuccessFully = false)
     }
     private fun clearInput(){
         phoneNumber = ""

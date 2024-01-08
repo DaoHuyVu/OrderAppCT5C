@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.orderappct5c.Message
 import com.example.orderappct5c.data.ApiResult
 import com.example.orderappct5c.data.menu.MenuRepository
 import dagger.assisted.Assisted
@@ -29,8 +30,8 @@ class MenuItemViewModel @AssistedInject constructor(
             _menuItemsUiState.value = MenuItemsUiState(isLoading = true)
             when(val menuItems = menuRepository.getMenuUI(category)){
                 is ApiResult.Success -> _menuItemsUiState.value = MenuItemsUiState(menuItems = menuItems.data)
-                is ApiResult.Failure -> _menuItemsUiState.value = MenuItemsUiState(errorMessage = menuItems.errorResponse.message)
-                is ApiResult.Exception -> _menuItemsUiState.value = MenuItemsUiState(errorMessage = menuItems.throwable.message)
+                is ApiResult.Failure -> _menuItemsUiState.value = MenuItemsUiState(errorMessage = menuItems.message)
+                is ApiResult.Exception -> _menuItemsUiState.value = MenuItemsUiState(errorMessage = Message.SERVER_BREAKDOWN)
             }
         }
     }

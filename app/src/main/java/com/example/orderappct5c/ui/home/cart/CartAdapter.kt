@@ -9,14 +9,14 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.orderappct5c.R
 import com.example.orderappct5c.databinding.CartItemLayoutBinding
-import com.example.orderappct5c.ui.home.menu.itemdetail.OrderItem
+import com.example.orderappct5c.ui.home.menu.itemdetail.OrderItemDto
 import com.example.orderappct5c.util.API_PREFIX
 
 class CartAdapter(
     private val onModify : (Long,Int) -> Unit,
     private val onRemove : (Long) -> Unit,
 
-) : ListAdapter<OrderItem,CartAdapter.CartItemViewHolder>(diffCallBack){
+) : ListAdapter<OrderItemDto,CartAdapter.CartItemViewHolder>(diffCallBack){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = CartItemViewHolder.create(parent)
 
     override fun onBindViewHolder(holder: CartItemViewHolder, position: Int) {
@@ -33,7 +33,7 @@ class CartAdapter(
             }
         }
         fun bind(
-            item : OrderItem,
+            item : OrderItemDto,
             onModify : (Long,Int) -> Unit,
             onRemove: (Long) -> Unit){
             binding.apply {
@@ -61,7 +61,7 @@ class CartAdapter(
                 decButton.setOnClickListener{
                     val quantityValue = quantity.text.toString().toInt()
                     if(quantityValue > 1){
-                        onModify.invoke(item.id,item.quantity-1)
+                        onModify.invoke(item.id,quantityValue-1)
                         quantity.text = quantityValue.minus(1).toString()
                     }
                 }
@@ -69,12 +69,12 @@ class CartAdapter(
         }
     }
 }
-private val diffCallBack = object : DiffUtil.ItemCallback<OrderItem>(){
-    override fun areItemsTheSame(oldItem: OrderItem, newItem: OrderItem): Boolean {
-        return oldItem.id == newItem.id && oldItem.quantity == newItem.quantity
+private val diffCallBack = object : DiffUtil.ItemCallback<OrderItemDto>(){
+    override fun areItemsTheSame(oldItem: OrderItemDto, newItem: OrderItemDto): Boolean {
+        return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(oldItem: OrderItem, newItem: OrderItem): Boolean {
+    override fun areContentsTheSame(oldItem: OrderItemDto, newItem: OrderItemDto): Boolean {
         return oldItem == newItem
     }
 }
