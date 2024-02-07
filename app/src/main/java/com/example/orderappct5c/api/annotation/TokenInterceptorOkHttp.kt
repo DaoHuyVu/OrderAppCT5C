@@ -1,4 +1,4 @@
-package com.example.orderappct5c.api.menu.okhttpannotation
+package com.example.orderappct5c.api.okhttpannotation
 
 import javax.inject.Qualifier
 
