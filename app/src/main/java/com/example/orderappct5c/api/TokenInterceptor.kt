@@ -1,4 +1,4 @@
-package com.example.orderappct5c.api.menu
+package com.example.orderappct5c.api
 
 import com.example.orderappct5c.util.DataStoreUtil
 import okhttp3.Interceptor

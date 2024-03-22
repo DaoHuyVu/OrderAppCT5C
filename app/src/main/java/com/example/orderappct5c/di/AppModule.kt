@@ -3,8 +3,8 @@ package com.example.orderappct5c.di
 
 import com.example.orderappct5c.api.auth.AuthService
 import com.example.orderappct5c.api.cart.CartService
-import com.example.orderappct5c.api.menu.TokenInterceptor
-import com.example.orderappct5c.api.menu.okhttpannotation.TokenInterceptorOkHttp
+import com.example.orderappct5c.api.TokenInterceptor
+import com.example.orderappct5c.api.annotation.TokenInterceptorOkHttp
 import com.example.orderappct5c.api.menu.MenuService
 import com.example.orderappct5c.api.menu.dispatchers.IODispatchers
 import com.example.orderappct5c.api.order.OrderDetailsService
