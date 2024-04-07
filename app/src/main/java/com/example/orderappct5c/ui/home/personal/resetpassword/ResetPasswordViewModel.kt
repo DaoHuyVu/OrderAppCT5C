@@ -51,6 +51,6 @@ class ResetPasswordViewModel @Inject constructor(
         _uiState.value = _uiState.value?.copy(message = null)
     }
     private fun isPasswordValid(password : String) : Boolean{
-        return password.matches(Regex("[a-zA-Z0-9.^!@#$%&*]{8,}"))
+        return password.matches(Regex("^[A-Z][a-z0-9.^!@#$%*]{7,24}"))
     }
 }

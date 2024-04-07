@@ -82,6 +82,6 @@ class SignUpViewModel @Inject constructor(
         return userName.length in 8 .. 25
     }
     private fun isPasswordValid(password : String) : Boolean{
-        return password.matches(Regex("[a-zA-Z0-9.^!@#$%&*]{8,}"))
+        return password.matches(Regex("^[A-Z][a-z0-9.^!@#$%&*]{7,24}"))
     }
 }

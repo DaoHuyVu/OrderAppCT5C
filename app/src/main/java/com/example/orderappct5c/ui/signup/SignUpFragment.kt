@@ -86,8 +86,8 @@ class SignUpFragment : Fragment() {
             it?.let{
                 binding.apply {
                     invalidUsername.visibility = if(it.userNameInvalid) View.VISIBLE else View.INVISIBLE
-                    invalidEmail.visibility = if(it.passwordInvalid) View.VISIBLE else View.INVISIBLE
-                    invalidPassword.visibility = if(it.emailInvalid) View.VISIBLE else View.INVISIBLE
+                    invalidEmail.visibility = if(it.emailInvalid) View.VISIBLE else View.INVISIBLE
+                    invalidPassword.visibility = if(it.passwordInvalid) View.VISIBLE else View.INVISIBLE
                 }
                 binding.signupButton.isEnabled = !it.passwordInvalid && !it.emailInvalid && !it.userNameInvalid
             }

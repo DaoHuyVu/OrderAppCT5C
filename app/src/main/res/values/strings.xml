@@ -5,7 +5,7 @@
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="invalid_username">*Username\'s length must be 8 to 25 characters long</string>
-    <string name="invalid_password">*Password must be > 8 characters\n A combination of uppercase letters, lowercase letters, numbers, and symbols.</string>
+    <string name="invalid_password">*Password must be in length of 8 to 25 characters\nFirst letter is uppercase \nOthers are lowercase letters, numbers, and special character : .^!@#$%*</string>
     <string name="login_button_text">Login</string>
     <string name="Username_hint">Username</string>
     <string name="password_hint">Password</string>
